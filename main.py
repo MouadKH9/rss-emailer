@@ -11,6 +11,8 @@ from email.mime.multipart import MIMEMultipart
 sender_email = "mouad.khchich@gmail.com"
 receiver_email = "mouad.khchich@gmail.com"
 
+sentArticles = []
+
 
 def sendEmail(subject, body):
     print("Sending email with subject {}".format(subject))
@@ -25,7 +27,7 @@ def sendEmail(subject, body):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login("mouad.khchich@gmail.com", "newpassword99")
-        server.sendmail(sender_email, receiver_email, message.as_string())
+        # server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 def getData():
@@ -34,12 +36,16 @@ def getData():
 
     print("Received {} lines:".format(len(dataFeed)))
     for entry in dataFeed.entries:
+        if entry.guid in sentArticles:
+            continue
+        sentArticles.append(entry.guid)
         url = entry.link
         response = requests.get(url)
 
         soup = BeautifulSoup(response.text, "html.parser")
         body = soup.find('div', class_="bw-release-story")
-
+        if body is None:
+            continue
         sendEmail(entry.title, body)
     s.enter(5, 1, getData)
 
