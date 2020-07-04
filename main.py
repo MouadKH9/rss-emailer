@@ -8,8 +8,10 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-sender_email = "mouad.khchich@gmail.com"
-receiver_email = "mouad.khchich@gmail.com"
+sender_email = "news@sustainiastocks.com"
+receiver_email = "news@sustainiastocks.com"
+smtp_server = "localhost"
+smtp_port = 1025
 
 sentArticles = []
 
@@ -25,9 +27,8 @@ def sendEmail(subject, body):
     message.attach(body)
 
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login("mouad.khchich@gmail.com", "newpassword99")
-        # server.sendmail(sender_email, receiver_email, message.as_string())
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 def getData():
